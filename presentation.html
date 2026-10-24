@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Favourite or gut feeling? — race results</title>
+  <style>
+    :root {
+      --ink: #111111;
+      --muted: #626262;
+      --paper: #ffffff;
+      --panel: #f7f7f7;
+      --line: #d6d6d6;
+      --lime: #637800;
+      --orange: #a94208;
+      --blue: #1558a6;
+      --purple: #7040a1;
+      --green: #14734d;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--paper); color: var(--ink); }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    h1, h2 { font-family: Georgia, "Times New Roman", serif; font-weight: 700; }
+    button { font: inherit; }
+    .deck { min-height: 100vh; }
+    .slide {
+      display: none;
+      min-height: 100vh;
+      padding: clamp(28px, 5vw, 76px) clamp(22px, 7vw, 108px) 100px;
+      animation: rise .35s ease both;
+    }
+    .slide.active { display: flex; flex-direction: column; }
+    @keyframes rise { from { opacity: .35; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .eyebrow {
+      color: var(--lime);
+      font-size: .76rem;
+      font-weight: 750;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    h1, h2, p { margin-top: 0; }
+    h1 { max-width: 900px; margin: 20px 0; font-size: clamp(3.2rem, 9vw, 8rem); line-height: .94; letter-spacing: -.07em; }
+    h2 { margin: 12px 0 24px; font-size: clamp(2rem, 5vw, 4rem); line-height: 1; letter-spacing: -.055em; }
+    .lede { max-width: 700px; color: var(--muted); font-size: clamp(1.05rem, 2vw, 1.35rem); line-height: 1.55; }
+    .cover { justify-content: center; position: relative; overflow: hidden; }
+    .cover::after {
+      content: "50";
+      position: absolute;
+      right: 2vw; bottom: -14vw;
+      color: #f0f0f0;
+      font-weight: 850; font-size: 55vw; line-height: .8;
+      letter-spacing: -.1em; pointer-events: none; z-index: 0;
+    }
+    .cover > * { position: relative; z-index: 1; }
+    .cover .eyebrow { font-size: .9rem; }
+    .cover .lede { max-width: 590px; }
+    .date-stamp { margin-top: 34px; color: var(--muted); font-size: .85rem; }
+    .intro-grid {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px; margin-top: auto;
+    }
+    .metric, .panel {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
+      padding: 20px;
+    }
+    .metric strong { display: block; font-size: clamp(1.8rem, 4vw, 3rem); letter-spacing: -.06em; }
+    .metric span, .subtle { color: var(--muted); font-size: .9rem; }
+    .metric.highlight { border-color: var(--lime); background: #f2f5e4; }
+    .metric.highlight strong { color: var(--lime); }
+    .big-finding {
+      display: grid; grid-template-columns: 1.2fr .8fr; gap: 24px; align-items: stretch;
+      margin: 18px 0 30px;
+    }
+    .finding-number { display: flex; flex-direction: column; justify-content: center; min-height: 270px; }
+    .finding-number strong { color: var(--lime); font-size: clamp(4rem, 11vw, 9rem); line-height: .85; letter-spacing: -.09em; }
+    .finding-number span { margin-top: 18px; color: var(--muted); }
+    .mini-bars { display: grid; gap: 14px; align-content: center; }
+    .bar-label { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 6px; font-size: .9rem; }
+    .bar-track { height: 10px; background: #e5e5e5; border-radius: 9px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--lime); border-radius: inherit; }
+    .bar-fill.player { background: var(--blue); }
+    .bar-fill.hindsight { background: var(--orange); }
+    .race-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; }
+    .race-index { color: var(--muted); white-space: nowrap; padding-top: 8px; }
+    .race-comparison { display: grid; grid-template-columns: minmax(300px, .82fr) minmax(0, 1.18fr); gap: 18px; align-items: stretch; }
+    .race-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; }
+    table { width: 100%; border-collapse: collapse; }
+    .race-table-wrap table:not(.summary-table) { table-layout: fixed; }
+    .race-table-wrap table:not(.summary-table) col:nth-child(1) { width: 65%; }
+    .race-table-wrap table:not(.summary-table) col:nth-child(2) { width: 35%; }
+    th, td { padding: 10px 12px; text-align: right; white-space: nowrap; }
+    th:first-child, td:first-child { text-align: left; }
+    .race-table-wrap table:not(.summary-table) th:first-child,
+    .race-table-wrap table:not(.summary-table) td:first-child { white-space: normal; }
+    thead { background: #f0f0f0; color: #333; font-size: .76rem; text-transform: uppercase; letter-spacing: .1em; }
+    tbody tr { border-top: 1px solid var(--line); }
+    tbody tr:hover { background: #f5f5f5; }
+    td.name { font-weight: 650; }
+    .favourite-row td:first-child { color: var(--lime); }
+    .winner-row td:first-child { color: var(--orange); }
+    .place-row td:first-child { color: var(--purple); }
+    .actual-row td:first-child { color: var(--blue); }
+    .payout { font-weight: 750; }
+    .win-tag {
+      display: inline-block; margin-left: 8px; padding: 3px 7px; border-radius: 999px;
+      background: #edf1da; color: var(--lime); font-size: .68rem; font-weight: 700; vertical-align: 2px;
+    }
+    .miss { color: #7f837e; }
+    .race-footnote { margin: 14px 0 0; color: var(--muted); font-size: .82rem; }
+    .legend { display: flex; flex-wrap: wrap; gap: 10px 20px; margin: 0 0 18px; color: var(--muted); font-size: .82rem; }
+    .legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; margin-right: 7px; border-radius: 50%; background: currentColor; }
+    .legend .f { color: var(--lime); } .legend .w { color: var(--orange); }
+    .legend .p { color: var(--purple); } .legend .a { color: var(--blue); }
+    .chart-panel { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; margin: 0; padding: 4px 6px 4px; background: #fff; border: 1px solid var(--line); border-radius: 14px; }
+    .chart-title { display: flex; justify-content: space-between; gap: 8px; margin: 0; font-size: .78rem; }
+    .chart-title span:last-child { color: var(--muted); }
+    .running-chart { display: block; min-height: 0; width: 100%; height: 100%; overflow: visible; }
+    .notes {
+      display: none; max-width: 850px; margin-top: auto; padding: 14px 18px;
+      border-left: 3px solid var(--lime); background: #f2f2f2; color: #333;
+      font-size: .88rem; line-height: 1.5;
+    }
+    .notes.show { display: block; }
+    .notes strong { color: var(--lime); }
+    .summary-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr); gap: 20px; }
+    .summary-table th, .summary-table td { padding: 10px 12px; }
+    .summary-table tbody tr:first-child { background: #f2f5e4; }
+    .rank { color: var(--muted); width: 45px; }
+    .winner-total { color: var(--orange); }
+    .place-total { color: var(--purple); }
+    .hindsight-box { display: grid; gap: 12px; align-content: start; }
+    .hindsight-box .panel { padding: 17px; }
+    .hindsight-box strong { display: block; margin: 6px 0; font-size: 1.65rem; }
+    .hindsight-box .win strong { color: var(--orange); }
+    .hindsight-box .place strong { color: var(--purple); }
+    .method { margin-top: 18px; max-width: 900px; color: var(--muted); font-size: .82rem; line-height: 1.5; }
+    .end-mark { color: var(--lime); }
+    .controls {
+      position: fixed; z-index: 5; right: 22px; bottom: 18px;
+      display: flex; align-items: center; gap: 8px; padding: 7px;
+      border: 1px solid var(--line); border-radius: 12px; background: #fff;
+    }
+    .controls button {
+      width: 38px; height: 38px; border: 0; border-radius: 8px;
+      background: transparent; color: var(--ink); cursor: pointer;
+    }
+    .controls button:hover { background: #eeeeee; }
+    .counter { min-width: 58px; color: var(--muted); text-align: center; font-size: .8rem; }
+    .progress { position: fixed; z-index: 6; top: 0; left: 0; height: 3px; background: var(--lime); transition: width .2s; }
+    .hint { position: fixed; left: 22px; bottom: 27px; z-index: 4; color: #666; font-size: .73rem; }
+    .print-cover { display: none; }
+    @media (max-width: 600px) {
+      .intro-grid, .big-finding, .summary-grid { grid-template-columns: 1fr; }
+      .race-comparison { grid-template-columns: 1fr; }
+      .metric { padding: 15px; }
+      .finding-number { min-height: 150px; }
+      th, td { padding: 10px; }
+      .slide { padding-bottom: 95px; }
+      .hint { display: none; }
+    }
+    @media print {
+      html, body { background: #fff !important; color: #111 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .slide { display: flex !important; min-height: 100vh; page-break-after: always; break-after: page; padding: 36px; }
+      .controls, .hint, .progress { display: none !important; }
+      .notes { display: none !important; }
+      .race-table-wrap { overflow: visible; }
+      table { font-size: 10pt; }
+      h2 { font-size: 30pt; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <main class="deck" id="deck">
+    <div id="race-slides"></div>
+
+    <section class="slide" id="summary-slide">
+      <div class="eyebrow">Across all selected dates</div>
+      <h2>The final payout table.</h2>
+      <div class="summary-grid">
+        <div class="race-table-wrap">
+          <table class="summary-table">
+            <thead><tr><th>#</th><th>Actual strategy / player</th><th>Rounds</th><th>Total payout</th></tr></thead>
+            <tbody id="ranking-body"></tbody>
+          </table>
+        </div>
+        <div class="hindsight-box">
+          <div class="panel win"><span class="subtle">Hindsight: best 50 kr win-only pick</span><strong>2,440.50 kr</strong><span class="subtle">600 kr staked · chosen after seeing results</span></div>
+          <div class="panel place"><span class="subtle">Hindsight: best 40 kr place-only pick</span><strong>1,650.80 kr</strong><span class="subtle">480 kr staked · chosen after seeing results</span></div>
+          <p class="method">These two benchmarks are not realistic strategies: each race’s horse was picked with the result already known. They show a ceiling, not a fair contest against players or the favourite rule.</p>
+        </div>
+      </div>
+      <p class="method">Player payouts are the recorded amounts for these dates; Mads N has 10 recorded rounds, while others have 12. Gross payouts are compared—not players’ net profit. The favourite rule stakes 50 kr in every race: 600 kr total.</p>
+      <aside class="notes"><strong>Presenter cue</strong> — The favourite rule ranks first among the actual players in this dataset, by 160.20 kr over Johan. The hindsight rows are deliberately outside the ranking: they answer “what was possible if we knew the result?” rather than “what could we have picked?”</aside>
+    </section>
+  </main>
+  <div class="hint">← → navigate · N show presenter cues · F full screen · P print</div>
+  <nav class="controls" aria-label="Slide controls">
+    <button id="prev" aria-label="Previous slide" title="Previous (←)">←</button>
+    <span class="counter" id="counter">1 / 13</span>
+    <button id="next" aria-label="Next slide" title="Next (→)">→</button>
+    <button id="notes-toggle" aria-label="Toggle presenter cues" title="Presenter cues (N)">N</button>
+  </nav>
+
+  <script>
+    const races = [
+      { label:"08 May · Race 3", horse:"FERRARI ROSSO", odds:4.3, place:3, actual:[88.9,29.4,0,49,58.8], win:444.5, winHorse:"GIBSON S H", placePay:225.2, placeHorse:"JACANA" },
+      { label:"22 May · Race 6", horse:"LUST FOR LIFE", odds:1.28, place:1, actual:[25.6,28.8,37.3,28.8,38.4], win:64, winHorse:"LUST FOR LIFE", placePay:96, placeHorse:"IAMTHESUN* (SE)" },
+      { label:"05 Jun · Race 4", horse:"KENZO RIVER (SE)", odds:1.4, place:1, actual:[76.2,0,0,14,46.5], win:70, winHorse:"KENZO RIVER (SE)", placePay:78.4, placeHorse:"BELUGA ONION (SE)" },
+      { label:"19 Jun · Race 5", horse:"LØVDALA DESTINY* (SE)", odds:3.2, place:3, actual:[64,25.7,0,80.4,25.7], win:402, winHorse:"HEJ BORK", placePay:128, placeHorse:"HOUSTON T T" },
+      { label:"03 Jul · Race 4", horse:"KATOKI", odds:1.8, place:4, actual:[117.6,0,87.8,87.8,96.4], win:207, winHorse:"KLEOPATRA S F", placePay:175.6, placeHorse:"HEART OF STONE" },
+      { label:"17 Jul · Race 6", horse:"L O C", odds:2.1, place:0, actual:[20,36,52.6,36,53.1], win:338.5, winHorse:"LAFAYETTE", placePay:75.2, placeHorse:"LAFAYETTE" },
+      { label:"31 Jul · Race 2", horse:"MENZA", odds:1.18, place:1, actual:[23.6,66.7,25.1,30.2,25.1], win:59, winHorse:"MENZA", placePay:112, placeHorse:"MAGIC SPEED" },
+      { label:"14 Aug · Race 6", horse:"KING LEGEND", odds:2.8, place:4, actual:[0,0,14,0,14], win:362, winHorse:"JOMO CASH", placePay:95.6, placeHorse:"L'AMIRAL PROPUL* (SE)" },
+      { label:"30 Aug · Race 11", horse:"LAZY DUST*", odds:2.2, place:1, actual:[26.2,39.6,39.9,39.6,26.2], win:110, winHorse:"LAZY DUST*", placePay:276, placeHorse:"LUDVIG CASH" },
+      { label:"11 Sep · Race 5", horse:"LADY STAR K J", odds:2.8, place:1, actual:[0,27.6,140,28,27.6], win:140, winHorse:"LADY STAR K J", placePay:62.4, placeHorse:"NORDIC ADVENTURE (SE)" },
+      { label:"25 Sep · Race 6", horse:"JAY JAY", odds:3, place:1, actual:[60,0,93.6,0,null], win:150, winHorse:"JAY JAY", placePay:236.8, placeHorse:"TEN O'CLOCK (SE)" },
+      { label:"09 Oct · Race 4", horse:"KEEP Z HYRDEHØJ", odds:1.87, place:1, actual:[0,0,36,18.7,null], win:93.5, winHorse:"KEEP Z HYRDEHØJ", placePay:89.6, placeHorse:"ERIC BANKER* (SE)" }
+    ];
+    const playerNames = ["Kristoffer", "Mads H", "Johan", "Mathias", "Mads N"];
+    const playerColors = ["#1558a6", "#08765f", "#bd3343", "#993b79", "#596b82"];
+    const totals = [
+      { name:"50 kr lowest-odds horse", rounds:12, payout:686.5, kind:"strategy" },
+      { name:"Johan", rounds:12, payout:526.3, kind:"player" },
+      { name:"Kristoffer", rounds:12, payout:502.1, kind:"player" },
+      { name:"Mathias", rounds:12, payout:412.5, kind:"player" },
+      { name:"Mads N", rounds:10, payout:411.8, kind:"player" },
+      { name:"Mads H", rounds:12, payout:253.8, kind:"player" }
+    ];
+    const money = n => n == null ? "—" : `${n.toLocaleString("en-GB", {minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits:2})} kr`;
+    const slidesRoot = document.getElementById("race-slides");
+    const userCues = [
+      "The favourite did not win. The winner-only hindsight line is especially large because it was selected after the finish.",
+      "The favourite won at short odds. Its payout is modest, while the place-only hindsight pick returned more.",
+      "Another low-odds favourite won; the hindsight place pick would have paid slightly more.",
+      "The favourite finished third. A hindsight win on HEJ BORK produces one of the biggest returns in the set.",
+      "The favourite finished fourth. Several players had strong payouts, while the best place-only hindsight pick was HEART OF STONE.",
+      "The favourite did not place. The actual group’s best payout was Johan’s; the hindsight win and place picks split sharply.",
+      "The favourite won, but the place-only hindsight option returned more. Compare its return with the actual player payouts.",
+      "The favourite finished fourth. The hindsight win-only pick is the largest race return in this sample.",
+      "The favourite won, though the best hindsight place-only payout was much higher.",
+      "The favourite won. Johan’s actual 140 kr payout matches the 50 kr winner-only return in this race.",
+      "A favourite win; Mads N has no recorded payout for this round. The place-only hindsight pick returned more than the winner-only pick.",
+      "A favourite win, but Mads N again has no recorded payout. Hindsight winner-only and place-only returns are close."
+    ];
+    const series = [
+      { key:"favourite", label:"Favourite", color:"#718800", values:[] },
+      ...playerNames.map((name, idx) => ({ key:`player-${name}`, label:name, color:playerColors[idx], values:[], playerIndex:idx })),
+    ];
+    series[0].values = races.reduce((values, race) => {
+      values.push((values.at(-1) ?? 0) + (race.place === 1 ? race.odds * 50 : 0));
+      return values;
+    }, []);
+    series.slice(1).forEach(item => {
+      item.values = races.reduce((values, race) => {
+        values.push((values.at(-1) ?? 0) + (race.actual[item.playerIndex] ?? 0));
+        return values;
+      }, []);
+    });
+    const chartSvg = through => {
+      const width = 900, height = 420, left = 46, right = 200, top = 8, bottom = 26;
+      const plotWidth = width - left - right, plotHeight = height - top - bottom;
+      const dataMax = Math.max(...series.map(item => item.values[item.values.length - 1]));
+      const maxValue = Math.ceil(dataMax * 1.1 / 100) * 100;
+      const x = idx => left + idx / 11 * plotWidth;
+      const y = value => top + plotHeight - Math.min(value, maxValue) / maxValue * plotHeight;
+      const ticks = Array.from({length: 5}, (_, idx) => idx * maxValue / 4).map(value =>
+        `<g><line x1="${left}" y1="${y(value)}" x2="${width-right}" y2="${y(value)}" stroke="#dedede"/><text x="${left-8}" y="${y(value)+4}" text-anchor="end" fill="#555" font-size="11">${value.toLocaleString("en-GB")}</text></g>`
+      ).join("");
+      const xLabels = races.slice(0, through + 1).map((race, idx) => {
+        const shortDate = race.label.split(" · ")[0];
+        return `<text x="${x(idx)}" y="${height-7}" text-anchor="middle" fill="#555" font-size="10">${shortDate}</text>`;
+      }).join("");
+      const labelPositions = series.map((item, index) => ({ index, y: y(item.values[through]) }))
+        .sort((a,b) => a.y - b.y);
+      labelPositions.forEach((item,index) => {
+        item.y = Math.max(top + 8, item.y, index ? labelPositions[index - 1].y + 18 : top + 8);
+      });
+      const labelOverflow = labelPositions.at(-1).y - (top + plotHeight - 6);
+      if (labelOverflow > 0) {
+        labelPositions.forEach(item => { item.y -= labelOverflow; });
+      }
+      const labelUnderflow = top + 8 - labelPositions[0].y;
+      if (labelUnderflow > 0) {
+        labelPositions.forEach(item => { item.y += labelUnderflow; });
+      }
+      const labelYByIndex = new Map(labelPositions.map(item => [item.index, item.y]));
+      const lines = series.map(item => {
+        const seriesIndex = series.indexOf(item);
+        const points = item.values.slice(0, through + 1).map((value, idx) => `${x(idx)},${y(value)}`).join(" ");
+        const markers = item.values.slice(0, through + 1).map((value, idx) =>
+          `<circle cx="${x(idx)}" cy="${y(value)}" r="${idx === through ? 4 : 2.3}" fill="${item.color}"/>`
+        ).join("");
+        const latest = item.values[through];
+        const labelX = x(through) + 10;
+        const labelY = labelYByIndex.get(seriesIndex);
+        const connector = Math.abs(labelY - y(latest)) > 6
+          ? `<line x1="${x(through)+4}" y1="${y(latest)}" x2="${labelX-3}" y2="${labelY-3}" stroke="${item.color}" stroke-width="1" opacity=".7"/>`
+          : "";
+        const label = `<text x="${labelX}" y="${labelY+4}" fill="${item.color}" font-size="11" font-weight="700">${item.label} · ${money(latest)}</text>`;
+        return `<polyline points="${points}" fill="none" stroke="${item.color}" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>${markers}${connector}${label}`;
+      }).join("");
+      return `<svg class="running-chart" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" role="img" aria-label="Cumulative payouts through ${races[through].label}">${ticks}${lines}${xLabels}</svg>`;
+    };
+    races.forEach((r, i) => {
+      const favouritePay = r.place === 1 ? r.odds * 50 : 0;
+      const favouriteOutcome = r.place === 1 ? "winner" : `placed ${r.place || "unplaced"}`;
+      const actualRows = playerNames
+        .map((name, idx) => ({ name, idx, total:series[idx + 1].values[i] }))
+        .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name))
+        .map(({ name, idx }) => {
+        const value = r.actual[idx];
+        return `<tr class="actual-row"><td class="name">${name}</td><td class="payout ${value == null ? "miss" : ""}">${money(value)}</td></tr>`;
+      }).join("");
+      const section = document.createElement("section");
+      section.className = "slide";
+      section.innerHTML = `
+        <div class="race-head">
+          <div><h2>${r.label}</h2></div>
+        </div>
+        <div class="race-comparison">
+          <div class="race-table-wrap">
+            <table>
+              <colgroup><col><col></colgroup>
+              <thead><tr><th>Who / strategy</th><th>This race</th></tr></thead>
+              <tbody>
+                <tr class="favourite-row"><td class="name">${r.horse}<span class="win-tag">${r.odds.toFixed(2)} odds · ${favouriteOutcome}</span></td><td class="payout">${money(favouritePay)}</td></tr>
+                ${actualRows}
+                <tr class="winner-row"><td class="name">${r.winHorse}</td><td class="payout">${money(r.win)}</td></tr>
+                <tr class="place-row"><td class="name">${r.placeHorse}</td><td class="payout">${money(r.placePay)}</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="chart-panel">
+            <div class="chart-title"><strong>Running payout total</strong><span>Through race ${i + 1} of 12 · kr</span></div>
+            ${chartSvg(i)}
+          </div>
+        </div>
+        <aside class="notes"><strong>Presenter cue</strong> — ${userCues[i]}</aside>`;
+      slidesRoot.appendChild(section);
+    });
+    const syncComparisonHeights = () => {
+      document.querySelectorAll(".race-comparison").forEach(comparison => {
+        const table = comparison.querySelector(".race-table-wrap");
+        const chart = comparison.querySelector(".chart-panel");
+        if (matchMedia("(max-width: 600px)").matches) {
+          chart.style.height = `${table.getBoundingClientRect().height}px`;
+        } else {
+          chart.style.removeProperty("height");
+        }
+      });
+    };
+    syncComparisonHeights();
+    window.addEventListener("resize", syncComparisonHeights);
+    document.getElementById("ranking-body").innerHTML = totals.map((row,i) =>
+      `<tr><td class="rank">${i+1}</td><td class="${row.kind === "strategy" ? "name end-mark" : "name"}">${row.name}</td><td>${row.rounds}</td><td class="payout">${money(row.payout)}</td></tr>`
+    ).join("");
+
+    const slides = [...document.querySelectorAll(".slide")];
+    let current = 0;
+    const counter = document.getElementById("counter");
+    const progress = document.getElementById("progress");
+    function showSlide(index) {
+      current = Math.max(0, Math.min(slides.length - 1, index));
+      slides.forEach((slide, i) => slide.classList.toggle("active", i === current));
+      syncComparisonHeights();
+      counter.textContent = `${current + 1} / ${slides.length}`;
+      progress.style.width = `${(current + 1) / slides.length * 100}%`;
+      history.replaceState(null, "", `#${current + 1}`);
+    }
+    function toggleNotes() {
+      const activeNotes = slides[current].querySelector(".notes");
+      if (activeNotes) activeNotes.classList.toggle("show");
+    }
+    document.getElementById("prev").addEventListener("click", () => showSlide(current - 1));
+    document.getElementById("next").addEventListener("click", () => showSlide(current + 1));
+    document.getElementById("notes-toggle").addEventListener("click", toggleNotes);
+    window.addEventListener("keydown", event => {
+      if (["ArrowRight","PageDown"," "].includes(event.key)) { event.preventDefault(); showSlide(current + 1); }
+      else if (["ArrowLeft","PageUp"].includes(event.key)) { event.preventDefault(); showSlide(current - 1); }
+      else if (event.key.toLowerCase() === "n") toggleNotes();
+      else if (event.key.toLowerCase() === "f") document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.();
+      else if (event.key.toLowerCase() === "p") window.print();
+      else if (event.key === "Home") showSlide(0);
+      else if (event.key === "End") showSlide(slides.length - 1);
+    });
+    const hashSlide = Number(location.hash.slice(1));
+    if (hashSlide > 0) showSlide(hashSlide - 1);
+    else showSlide(0);
+  </script>
+</body>
+</html>
