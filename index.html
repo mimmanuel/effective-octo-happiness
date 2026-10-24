@@ -190,12 +190,12 @@
           </table>
         </div>
         <div class="hindsight-box">
-          <div class="panel win"><span class="subtle">Hindsight: best 50 kr win-only pick</span><strong>2,440.50 kr</strong><span class="subtle">600 kr staked · chosen after seeing results</span></div>
-          <div class="panel place"><span class="subtle">Hindsight: best 40 kr place-only pick</span><strong>1,650.80 kr</strong><span class="subtle">480 kr staked · chosen after seeing results</span></div>
+          <div class="panel win"><span class="subtle">Hindsight: best 50 kr win-only pick</span><strong>2,697.50 kr</strong><span class="subtle">600 kr staked · chosen after seeing results</span></div>
+          <div class="panel place"><span class="subtle">Hindsight: best 40 kr place-only pick</span><strong>3,224.40 kr</strong><span class="subtle">480 kr staked · chosen after seeing results</span></div>
         </div>
       </div>
-      <p class="method">Player payouts are the recorded amounts for these dates; Mads N has 10 recorded rounds, while others have 12. Gross payouts are compared—not players’ net profit. The favourite rule ranks first among the actual players in this dataset.</p>
-      <aside class="notes"><strong>Presenter cue</strong> — The favourite rule ranks first among the actual players in this dataset, by 160.20 kr over Johan. The hindsight rows are deliberately outside the real game and illustrate a ceiling, not a fair contest.</aside>
+      <p class="method">Player payouts are the recorded amounts for these dates; Mads N has 10 recorded rounds, while others have 13. Gross payouts are compared—not players’ net profit. The favourite rule ranks first among the actual players in this dataset, by 160.20 kr over Johan. The hindsight rows are deliberately outside the real contest and show how much a perfect post-result pick could have returned.</p>
+      <aside class="notes"><strong>Presenter cue</strong> — The favourite rule ranks first among the actual players in this dataset, by 160.20 kr over Johan. The hindsight rows are deliberately outside the real contest and show how much a perfect post-result pick could have returned.</aside>
     </section>
   </main>
   <div class="hint">← → navigate · N show presenter cues · F full screen · P print</div>
@@ -220,17 +220,17 @@
       { label:"11 Sep · Race 5", horse:"LADY STAR K J", odds:2.8, place:1, actual:[0,27.6,140,28,27.6], win:140, winHorse:"LADY STAR K J", placePay:62.4, placeHorse:"NORDIC ADVENTURE (SE)" },
       { label:"25 Sep · Race 6", horse:"JAY JAY", odds:3, place:1, actual:[60,0,93.6,0,null], win:150, winHorse:"JAY JAY", placePay:236.8, placeHorse:"TEN O'CLOCK (SE)" },
       { label:"09 Oct · Race 4", horse:"KEEP Z HYRDEHØJ", odds:1.87, place:1, actual:[0,0,36,18.7,null], win:93.5, winHorse:"KEEP Z HYRDEHØJ", placePay:89.6, placeHorse:"ERIC BANKER* (SE)" },
-      { label:"23 Oct · Race 1", horse:"6 — Fakir De Beauvalet / Karina Madsen", odds:3.74, place:0, actual:[102.8,0,0,0,null], win:257, winHorse:"CADIZ* (DK)", placePay:1573.6, placeHorse:"FALCON CHIP* (DK)" }
+      { label:"23 Oct · Race 1", horse:"6 — Fakir De Beauvalet / Karina Madsen", odds:3.74, place:0, actual:[102.8,0,0,0,null], win:257, winHorse:"CADIZ* (DK)", placePay:1573.6, placeHorse:"FALCON WARRIOR" }
     ];
     const playerNames = ["Kristoffer", "Mads H", "Johan", "Mathias", "Mads N"];
     const playerColors = ["#1558a6", "#08765f", "#bd3343", "#993b79", "#596b82"];
     const totals = [
-      { name:"50 kr lowest-odds horse", rounds:12, payout:686.5, kind:"strategy" },
-      { name:"Johan", rounds:12, payout:526.3, kind:"player" },
-      { name:"Kristoffer", rounds:12, payout:502.1, kind:"player" },
-      { name:"Mathias", rounds:12, payout:412.5, kind:"player" },
+      { name:"50 kr lowest-odds horse", rounds:13, payout:686.5, kind:"strategy" },
+      { name:"Johan", rounds:13, payout:526.3, kind:"player" },
+      { name:"Kristoffer", rounds:13, payout:604.9, kind:"player" },
+      { name:"Mathias", rounds:13, payout:412.5, kind:"player" },
       { name:"Mads N", rounds:10, payout:411.8, kind:"player" },
-      { name:"Mads H", rounds:12, payout:253.8, kind:"player" }
+      { name:"Mads H", rounds:13, payout:253.8, kind:"player" }
     ];
     const money = n => n == null ? "—" : `${n.toLocaleString("en-GB", {minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits:2})} kr`;
     const slidesRoot = document.getElementById("race-slides");
@@ -271,7 +271,7 @@
       const x = idx => left + idx / 11 * plotWidth;
       const y = value => top + plotHeight - Math.min(value, maxValue) / maxValue * plotHeight;
       const ticks = Array.from({length: 5}, (_, idx) => idx * maxValue / 4).map(value =>
-        `<g><line x1="${left}" y1="${y(value)}" x2="${width-right}" y2="${y(value)}" stroke="#dedede"/><text x="${left-8}" y="${y(value)+4}" text-anchor="end" fill="#555" font-size="11">${value.toLocaleString("en-GB", {maximumFractionDigits:0})}</text></g>`
+        `<g><line x1="${left}" y1="${y(value)}" x2="${width-right}" y2="${y(value)}" stroke="#dedede"/><text x="${left-8}" y="${y(value)+4}" text-anchor="end" fill="#555" font-size="11">${value.toLocaleString("en-GB", {maximumFractionDigits: 0})}</text></g>`
       ).join("");
       const xLabels = races.slice(0, through + 1).map((race, idx) => {
         const shortDate = race.label.split(" · ")[0];
@@ -315,9 +315,9 @@
         .map((name, idx) => ({ name, idx, total:series[idx + 1].values[i] }))
         .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name))
         .map(({ name, idx }) => {
-        const value = r.actual[idx];
-        return `<tr class="actual-row"><td class="name">${name}</td><td class="payout ${value == null ? "miss" : ""}">${money(value)}</td></tr>`;
-      }).join("");
+          const value = r.actual[idx];
+          return `<tr class="actual-row"><td class="name">${name}</td><td class="payout ${value == null ? "miss" : ""}">${money(value)}</td></tr>`;
+        }).join("");
       const section = document.createElement("section");
       section.className = "slide";
       section.innerHTML = `
