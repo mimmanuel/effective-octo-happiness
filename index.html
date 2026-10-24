@@ -220,7 +220,7 @@
       { label:"11 Sep · Race 5", horse:"LADY STAR K J", odds:2.8, place:1, actual:[0,27.6,140,28,27.6], win:140, winHorse:"LADY STAR K J", placePay:62.4, placeHorse:"NORDIC ADVENTURE (SE)" },
       { label:"25 Sep · Race 6", horse:"JAY JAY", odds:3, place:1, actual:[60,0,93.6,0,null], win:150, winHorse:"JAY JAY", placePay:236.8, placeHorse:"TEN O'CLOCK (SE)" },
       { label:"09 Oct · Race 4", horse:"KEEP Z HYRDEHØJ", odds:1.87, place:1, actual:[0,0,36,18.7,null], win:93.5, winHorse:"KEEP Z HYRDEHØJ", placePay:89.6, placeHorse:"ERIC BANKER* (SE)" },
-      { label:"23 Oct · Race 1", horse:"CADIZ* (DK)", odds:5.14, place:1, actual:[102.8,0,0,0,null], win:257, winHorse:"CADIZ* (DK)", placePay:1573.6, placeHorse:"FALCON CHIP* (DK)" }
+      { label:"23 Oct · Race 1", horse:"CADIZ* (DK)", odds:5.14, place:0, actual:[102.8,0,0,0,null], win:257, winHorse:"CADIZ* (DK)", placePay:1573.6, placeHorse:"FALCON CHIP* (DK)" }
     ];
     const playerNames = ["Kristoffer", "Mads H", "Johan", "Mathias", "Mads N"];
     const playerColors = ["#1558a6", "#08765f", "#bd3343", "#993b79", "#596b82"];
@@ -247,7 +247,7 @@
       "The favourite won. Johan’s actual 140 kr payout matches the 50 kr winner-only return in this race.",
       "A favourite win; Mads N has no recorded payout for this round. The place-only hindsight pick returned more than the winner-only pick.",
       "A favourite win, but Mads N again has no recorded payout. Hindsight winner-only and place-only returns are close.",
-      "The latest race uses the most recent 23/10/2026 win and place data from the app screenshots."
+      "The lowest-odds strategy pays zero for the final race, even though the declared winner row still records the actual winning horse."
     ];
     const series = [
       { key:"favourite", label:"Favourite", color:"#718800", values:[] },
