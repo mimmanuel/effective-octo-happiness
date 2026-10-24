@@ -154,88 +154,14 @@
     .progress { position: fixed; z-index: 6; top: 0; left: 0; height: 3px; background: var(--lime); transition: width .2s; }
     .hint { position: fixed; left: 22px; bottom: 27px; z-index: 4; color: #666; font-size: .73rem; }
     .print-cover { display: none; }
-    .ticket-slide {
-      background: #060708;
-      color: #ffffff;
-      min-height: 100vh;
-    }
-    .ticket-slide .eyebrow {
-      color: #b8f5b5;
-    }
-    .ticket-slide h2 {
-      color: #ffffff;
-      margin-bottom: 18px;
-    }
-    .ticket-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(260px, 1fr));
-      gap: 18px 24px;
-      align-items: start;
-      max-width: 1100px;
-    }
-    .ticket-card {
-      background: #111317;
-      border: 1px solid #20252a;
-      padding: 10px 12px 8px;
-      color: #fff;
-    }
-    .ticket-card h3 {
-      margin: 0 0 10px;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 1.2rem;
-      letter-spacing: .02em;
-      text-transform: uppercase;
-      color: #fff;
-      font-weight: 800;
-    }
-    .ticket-card table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #111317;
-      color: #fff;
-    }
-    .ticket-card th,
-    .ticket-card td {
-      padding: 7px 8px;
-      border: 1px solid rgba(255,255,255,.18);
-      text-align: left;
-      font-size: 0.95rem;
-    }
-    .ticket-card th {
-      background: #b6eab0;
-      color: #111;
-      font-weight: 700;
-    }
-    .ticket-card td:nth-child(2),
-    .ticket-card td:nth-child(3) {
-      text-align: right;
-    }
-    .ticket-card .muted {
-      color: #dfe5d6;
-    }
-    .ticket-card .result {
-      color: #b8f5b5;
-      font-weight: 700;
-    }
-    .ticket-card.narrow {
-      max-width: 540px;
-    }
-    .ticket-footer {
-      margin-top: 18px;
-      color: #d6d6d6;
-      font-size: 0.9rem;
-      letter-spacing: .02em;
-    }
     @media (max-width: 600px) {
-      .intro-grid, .big-finding, .summary-grid, .ticket-grid { grid-template-columns: 1fr; }
+      .intro-grid, .big-finding, .summary-grid { grid-template-columns: 1fr; }
       .race-comparison { grid-template-columns: 1fr; }
       .metric { padding: 15px; }
       .finding-number { min-height: 150px; }
       th, td { padding: 10px; }
       .slide { padding-bottom: 95px; }
       .hint { display: none; }
-      .ticket-card th,
-      .ticket-card td { font-size: 0.8rem; }
     }
     @media print {
       html, body { background: #fff !important; color: #111 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
@@ -253,93 +179,6 @@
   <main class="deck" id="deck">
     <div id="race-slides"></div>
 
-    <section class="slide ticket-slide" aria-label="Latest betting slip preview">
-      <div class="eyebrow">Spillekuponer til 23/10/2026</div>
-      <h2>Latest ticket preview</h2>
-      <div class="ticket-grid">
-        <div class="ticket-card">
-          <h3>Johan</h3>
-          <table>
-            <thead>
-              <tr><th>Løb 1</th><th>Heste</th><th>Penge</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Vinder</td><td>7</td><td>kr 0,00</td></tr>
-              <tr><td>Plads</td><td>6</td><td>kr 0,00</td></tr>
-              <tr><td>Supervinder</td><td></td><td>kr 50,00</td></tr>
-              <tr><td>Tvilling</td><td></td><td>kr 40,00</td></tr>
-              <tr><td class="muted">Resultat</td><td colspan="2" class="result">kr 0,00</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="ticket-card">
-          <h3>Kristoffer</h3>
-          <table>
-            <thead>
-              <tr><th>Løb 1</th><th>Heste</th><th>Penge</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Vinder</td><td>1</td><td>kr 20,00</td></tr>
-              <tr><td>Plads</td><td>9</td><td>kr 10,00</td></tr>
-              <tr><td>Supervinder</td><td></td><td>kr 50,00</td></tr>
-              <tr><td>Tvilling</td><td></td><td></td></tr>
-              <tr><td class="muted">Resultat</td><td colspan="2" class="result">kr 102,80</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="ticket-card">
-          <h3>Mathias</h3>
-          <table>
-            <thead>
-              <tr><th>Løb 1</th><th>Heste</th><th>Penge</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Vinder</td><td>6</td><td>kr 10,00</td></tr>
-              <tr><td>Plads</td><td>6</td><td>kr 0,00</td></tr>
-              <tr><td>Supervinder</td><td></td><td>kr 50,00</td></tr>
-              <tr><td>Tvilling</td><td></td><td>kr 40,00</td></tr>
-              <tr><td class="muted">Resultat</td><td colspan="2" class="result">kr 0,00</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="ticket-card">
-          <h3>Mads H</h3>
-          <table>
-            <thead>
-              <tr><th>Løb 1</th><th>Heste</th><th>Penge</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Vinder</td><td></td><td>kr 20,00</td></tr>
-              <tr><td>Plads</td><td></td><td>kr 10,00</td></tr>
-              <tr><td>Supervinder</td><td></td><td>kr 50,00</td></tr>
-              <tr><td>Tvilling</td><td>1 - 6</td><td>kr 40,00</td></tr>
-              <tr><td class="muted">Resultat</td><td colspan="2" class="result">kr 0,00</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="ticket-card narrow">
-          <h3>Mads N</h3>
-          <table>
-            <thead>
-              <tr><th>Løb 1</th><th>Heste</th><th>Penge</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Vinder</td><td></td><td></td></tr>
-              <tr><td>Plads</td><td></td><td>kr 20,00</td></tr>
-              <tr><td>Supervinder</td><td></td><td>kr 50,00</td></tr>
-              <tr><td>Tvilling</td><td></td><td>kr 40,00</td></tr>
-              <tr><td class="muted">Resultat</td><td colspan="2" class="result">-</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="ticket-footer">Løb 2 · 23/10/2026</div>
-    </section>
-
     <section class="slide" id="summary-slide">
       <div class="eyebrow">Across all selected dates</div>
       <h2>The final payout table.</h2>
@@ -355,8 +194,8 @@
           <div class="panel place"><span class="subtle">Hindsight: best 40 kr place-only pick</span><strong>1,650.80 kr</strong><span class="subtle">480 kr staked · chosen after seeing results</span></div>
         </div>
       </div>
-      <p class="method">Player payouts are the recorded amounts for these dates; Mads N has 10 recorded rounds, while others have 12. Gross payouts are compared—not players’ net profit. The favourite rule ranks first among the actual players in this dataset. This slide also includes the latest ticket preview for 23/10/2026, with the final winner and odds fields intentionally left provisional until you confirm them.</p>
-      <aside class="notes"><strong>Presenter cue</strong> — The favourite rule ranks first among the actual players in this dataset, by 160.20 kr over Johan. The hindsight rows are deliberately outside the real game and illustrate a ceiling, not a fair contest. The latest ticket preview is a working draft until the final winner/odds are confirmed.</aside>
+      <p class="method">Player payouts are the recorded amounts for these dates; Mads N has 10 recorded rounds, while others have 12. Gross payouts are compared—not players’ net profit. The favourite rule ranks first among the actual players in this dataset.</p>
+      <aside class="notes"><strong>Presenter cue</strong> — The favourite rule ranks first among the actual players in this dataset, by 160.20 kr over Johan. The hindsight rows are deliberately outside the real game and illustrate a ceiling, not a fair contest.</aside>
     </section>
   </main>
   <div class="hint">← → navigate · N show presenter cues · F full screen · P print</div>
@@ -380,7 +219,8 @@
       { label:"30 Aug · Race 11", horse:"LAZY DUST*", odds:2.2, place:1, actual:[26.2,39.6,39.9,39.6,26.2], win:110, winHorse:"LAZY DUST*", placePay:276, placeHorse:"LUDVIG CASH" },
       { label:"11 Sep · Race 5", horse:"LADY STAR K J", odds:2.8, place:1, actual:[0,27.6,140,28,27.6], win:140, winHorse:"LADY STAR K J", placePay:62.4, placeHorse:"NORDIC ADVENTURE (SE)" },
       { label:"25 Sep · Race 6", horse:"JAY JAY", odds:3, place:1, actual:[60,0,93.6,0,null], win:150, winHorse:"JAY JAY", placePay:236.8, placeHorse:"TEN O'CLOCK (SE)" },
-      { label:"09 Oct · Race 4", horse:"KEEP Z HYRDEHØJ", odds:1.87, place:1, actual:[0,0,36,18.7,null], win:93.5, winHorse:"KEEP Z HYRDEHØJ", placePay:89.6, placeHorse:"ERIC BANKER* (SE)" }
+      { label:"09 Oct · Race 4", horse:"KEEP Z HYRDEHØJ", odds:1.87, place:1, actual:[0,0,36,18.7,null], win:93.5, winHorse:"KEEP Z HYRDEHØJ", placePay:89.6, placeHorse:"ERIC BANKER* (SE)" },
+      { label:"23 Oct · Race 1", horse:"CADIZ* (DK)", odds:5.14, place:1, actual:[102.8,0,0,0,null], win:257, winHorse:"CADIZ* (DK)", placePay:1573.6, placeHorse:"FALCON CHIP* (DK)" }
     ];
     const playerNames = ["Kristoffer", "Mads H", "Johan", "Mathias", "Mads N"];
     const playerColors = ["#1558a6", "#08765f", "#bd3343", "#993b79", "#596b82"];
@@ -406,7 +246,8 @@
       "The favourite won, though the best hindsight place-only payout was much higher.",
       "The favourite won. Johan’s actual 140 kr payout matches the 50 kr winner-only return in this race.",
       "A favourite win; Mads N has no recorded payout for this round. The place-only hindsight pick returned more than the winner-only pick.",
-      "A favourite win, but Mads N again has no recorded payout. Hindsight winner-only and place-only returns are close."
+      "A favourite win, but Mads N again has no recorded payout. Hindsight winner-only and place-only returns are close.",
+      "The latest race uses the most recent 23/10/2026 win and place data from the app screenshots."
     ];
     const series = [
       { key:"favourite", label:"Favourite", color:"#718800", values:[] },
@@ -497,7 +338,7 @@
             </table>
           </div>
           <div class="chart-panel">
-            <div class="chart-title"><strong>Running payout total</strong><span>Through race ${i + 1} of 12 · kr</span></div>
+            <div class="chart-title"><strong>Running payout total</strong><span>Through race ${i + 1} of 13 · kr</span></div>
             ${chartSvg(i)}
           </div>
         </div>
